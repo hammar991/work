@@ -55,3 +55,7 @@ class Task(SQLModel, table=True):
     start_time: datetime = Field(default_factory=datetime.now, nullable=False)
     end_time: datetime = Field(default_factory=datetime.now, nullable=False)
     current_status: TaskStatus = Field(default=TaskStatus.PLANNED, sa_type=VARCHAR)
+
+
+def init_db(engine):
+    SQLModel.metadata.create_all(engine)
