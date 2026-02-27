@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter
 
 from work.adapter.sql import DBSessionDependency
