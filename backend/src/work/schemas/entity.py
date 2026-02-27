@@ -21,6 +21,7 @@ class Require(SQLModel, table=True):
 
     serial: int | None = Field(primary_key=True, unique=True)
 
+    title: str
     content: str
 
     create_by: str
@@ -31,7 +32,9 @@ class Project(SQLModel, table=True):
     __tablename__ = "project"
 
     serial: int | None = Field(primary_key=True, unique=True)
-    link_require: int = Field(foreign_key="require.serial", nullable=False)
+    link: int = Field(foreign_key="require.serial", nullable=False)
+
+    title: str
     content: str
 
     create_by: str
@@ -42,9 +45,11 @@ class Task(SQLModel, table=True):
     __tablename__ = "task"
 
     serial: int | None = Field(primary_key=True, unique=True)
+    link: int = Field(foreign_key="project.serial", nullable=False)
 
     owner: str
 
+    title: str
     content: str
     create_time: datetime = Field(default_factory=datetime.now, nullable=False)
     start_time: datetime = Field(default_factory=datetime.now, nullable=False)

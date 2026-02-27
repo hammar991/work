@@ -6,7 +6,7 @@
 
     <n-form ref="formRef" :label-width="80" :model="requireMeta">
       <n-form-item label="需求名称" path="user.name">
-        <n-input v-model:value="requireMeta.name" placeholder="输入名称" />
+        <n-input v-model:value="requireMeta.title" placeholder="输入名称" />
       </n-form-item>
       <n-form-item label="需求描述" path="user.content">
         <n-input v-model:value="requireMeta.content" placeholder="输入需求描述" type="textarea" />
@@ -17,7 +17,6 @@
     </n-form>
 
     <pre>{{ requireMeta }}</pre>
-    <pre>{{ actualRequireMeta }}</pre>
   </n-card>
 </template>
 
@@ -25,14 +24,9 @@
 import { reactive } from 'vue'
 
 const requireMeta = reactive({
-  name: '',
+  title: '',
   content: '',
 })
 
-const actualRequireMeta = reactive({
-  content: '',
-})
-const submitRequire = async () => {
-  actualRequireMeta.content = `# ${requireMeta.name}\n\n${requireMeta.content}`
-}
+const submitRequire = async () => {}
 </script>

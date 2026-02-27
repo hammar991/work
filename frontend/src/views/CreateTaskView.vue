@@ -6,8 +6,18 @@
 
     <n-form ref="formRef" :label-width="80" :model="taskMeta">
       <n-form-item label="任务名称" path="user.name">
-        <n-input v-model:value="taskMeta.name" placeholder="输入任务" />
+        <n-input v-model:value="taskMeta.title" placeholder="输入任务" />
       </n-form-item>
+
+      <n-form-item label="关联项目" path="user.name">
+        <n-select
+          v-model:value="taskMeta.link"
+          filterable
+          placeholder="选择关联项目"
+          :options="options"
+        />
+      </n-form-item>
+
       <n-form-item label="任务描述" path="user.content">
         <n-input v-model:value="taskMeta.content" placeholder="输入任务描述" type="textarea" />
       </n-form-item>
@@ -17,22 +27,27 @@
     </n-form>
 
     <pre>{{ taskMeta }}</pre>
-    <pre>{{ actualTaskMeta }}</pre>
   </n-card>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 
+const options = ref([
+  {
+    label: '需求1',
+    value: 0,
+  },
+  {
+    label: '需求2',
+    value: 1,
+  },
+])
 const taskMeta = reactive({
-  name: '',
+  title: '',
+  link: -1,
   content: '',
 })
 
-const actualTaskMeta = reactive({
-  content: '',
-})
-const submitTask = async () => {
-  actualTaskMeta.content = `# ${taskMeta.name}\n\n${taskMeta.content}`
-}
+const submitTask = async () => {}
 </script>

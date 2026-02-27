@@ -4,30 +4,33 @@ import CreateProjectView from '@/views/CreateProjectView.vue'
 import CreateRequireView from '@/views/CreateRequireView.vue'
 import CreateTaskView from '@/views/CreateTaskView.vue'
 
+const routerMeta = [
+  {
+    path: '/',
+    name: '主页',
+    component: HomeView,
+  },
+  {
+    path: '/create-require',
+    name: '创建需求',
+    component: CreateRequireView,
+  },
+  {
+    path: '/create-project',
+    name: '创建项目',
+    component: CreateProjectView,
+  },
+  {
+    path: '/create-task',
+    name: '创建任务',
+    component: CreateTaskView,
+  },
+]
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/create-project',
-      name: 'create-project',
-      component: CreateProjectView,
-    },
-    {
-      path: '/create-require',
-      name: 'create-require',
-      component: CreateRequireView,
-    },
-    {
-      path: '/create-task',
-      name: 'create-task',
-      component: CreateTaskView,
-    },
-  ],
+  routes: routerMeta,
 })
 
 export default router
+export { routerMeta }
