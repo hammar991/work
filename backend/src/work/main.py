@@ -1,13 +1,11 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from work.api import require, auth
+from work.api import require
 
 
 app = FastAPI()
 
 
-
-for r_base in [require, auth]:
+for r_base in [require]:
     app.include_router(r_base.router)
 
 
