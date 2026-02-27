@@ -1,9 +1,10 @@
 from typing import Optional, Dict, Any
+from datetime import datetime, timedelta, timezone
 from authlib.integrations.starlette_client import OAuth
 from fastapi import Request, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlmodel import Session
-from jose import JWTError
+from jose import JWTError, jwt
 
 from work.adapter.user import UserAdapter
 from work.schemas.entity import User
@@ -23,7 +24,7 @@ class AuthService:
             client_id=SETTING.OIDC_CLIENT_ID,
             client_secret=SETTING.OIDC_CLIENT_SECRET,
             redirect_uri=SETTING.REDIRECT_URI,
-            scope='openid profile email'
+            scope=SETTING.OIDC_SCOPE
         )
 
     async def login(self, request: Request):
@@ -52,9 +53,21 @@ class AuthService:
                 alias=user_info.get('name', '')
             )
             user = self.user_adapter.create(user)
+
+        # 内部 token
+        expire = datetime.now(timezone.utc) + timedelta(minutes=SETTING.ACCESS_TOKEN_EXPIRE_MINUTES)
+        internal_token = jwt.encode(
+            {
+                "sub": user.oidc_id,
+                "name": user.alias,
+                "exp": expire
+            },
+            SETTING.SECRET_KEY,
+            algorithm=SETTING.ALGORITHM
+        )
         
         return {
-            'access_token': token.get('access_token'),
+            'access_token': internal_token,
             'token_type': 'Bearer',
             'user': {
                 'serial': user.serial,
@@ -79,13 +92,16 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     token = credentials.credentials     # 提取jwt
     try:
         # 解码 token 获取用户信息
+        payload = jwt.decode(token, SETTING.SECRET_KEY, algorithms=[SETTING.ALGORITHM])
+        oidc_id = payload.get('sub')
         # 这里需要根据实际的 OIDC 提供商配置来解码
-        # 使用 JWKS 或公钥验证 token
-        auth_service = AuthService(session)
-        # 这里简化处理，实际应该验证 token 并获取用户信息
-        return {"token": token}
+        user_adapter = UserAdapter(session)
+        user = user_adapter.get_by_oidc_id(oidc_id=oidc_id)
+        return user
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail='Token 已过期！')
     except JWTError:
-        raise HTTPException(status_code=401, detail='Invalid authentication credentials')
+        raise HTTPException(status_code=401, detail='无法验证凭证！')
 
 
 
