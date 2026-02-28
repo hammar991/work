@@ -29,7 +29,6 @@ coverage
 
 .idea
 .vscode
-.env
 
 # Cypress
 /cypress/videos/
