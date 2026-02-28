@@ -5,7 +5,6 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "authlib>=1.6.8",
     "fastapi>=0.133.1",
     "httpx>=0.28.1",
     "loguru>=0.7.3",
@@ -19,7 +18,12 @@ dependencies = [
     "uvicorn>=0.41.0",
     "loguru>=0.7.3",
     "nanoid>=2.0.0",
+    "authlib>=1.6.8",
+    "requests>=2.32.5",
+    "itsdangerous>=2.2.0",
+    "certifi>=2026.2.25",
+    "pyjwt>=2.11.0",
 ]
-[[tool.uv.index]]
-url = "http://10.21.0.55:8081/repository/pypi/simple"
-default = true
+#[[tool.uv.index]]
+#url = "http://10.21.0.55:8081/repository/pypi/simple"
+#default = true

@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     # jwt访问令牌
     SECRET_KEY :str
     ALGORITHM: str = "HS256"
+    audience: str
     
     # token过期时间（分钟）
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 720

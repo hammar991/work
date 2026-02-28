@@ -1,6 +1,8 @@
 from typing import Optional, Dict, Any
 from datetime import datetime, timedelta, timezone
+
 from authlib.integrations.starlette_client import OAuth
+from loguru import logger
 from fastapi import Request, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlmodel import Session
@@ -20,22 +22,31 @@ class AuthService:
         # 配置 OIDC 提供商
         self.oauth.register(
             name=SETTING.OIDC_NAME,
-            server_metadata_url=SETTING.OIDC_DISCOVERY_URL,
             client_id=SETTING.OIDC_CLIENT_ID,
             client_secret=SETTING.OIDC_CLIENT_SECRET,
-            redirect_uri=SETTING.REDIRECT_URI,
+            server_metadata_url=SETTING.OIDC_DISCOVERY_URL,
             scope=SETTING.OIDC_SCOPE
         )
 
-    async def login(self, request: Request):
-        return await self.oauth.oidc.authorize_redirect(request, SETTING.REDIRECT_URI)
+    def decode_jwt_no_verify(self, token):
+        _ = self
+        # return jwt.decode(token, key=SETTING.audience, algorithms=["RS256"])
+        return jwt.decode(token, options={"verify_signature": False}, audience=SETTING.audience, algorithms=["RS256"], key="")
 
-    async def callback(self, request: Request) -> Dict[str, Any]:
+    async def login(self, request: Request, provider_name: str):
+        client = self.oauth.create_client(provider_name)
+        redirect_url = request.url_for("auth_callback", provider_name=provider_name)
+        return await client.authorize_redirect(request, redirect_url)
 
+    async def callback(self, request: Request, provider_name: str) -> Dict[str, Any]:
+        client = self.oauth.create_client(provider_name)
         # 获取用户信息
-        token = await self.oauth.oidc.authorize_access_token(request)
-        user_info = token.get('userinfo')
-        
+        token = await client.authorize_access_token(request)
+        # logger.debug(token)
+        oidc_jwt = token.get('access_token')
+        user_info = self.decode_jwt_no_verify(oidc_jwt)
+        # logger.debug(user_info)
+
         if not user_info:
             raise HTTPException(status_code=401, detail='获取用户信息！')
 
