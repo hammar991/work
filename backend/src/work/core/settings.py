@@ -2,8 +2,9 @@ from pydantic_settings import BaseSettings
 from pydantic import AnyUrl, ValidationError
 from loguru import logger
 
+
 class Settings(BaseSettings):
-    db_url: AnyUrl = "postgresql://work:work@10.21.0.55:12345/work"
+    db_url: AnyUrl
 
     # OIDC 服务商配置
     OIDC_NAME : str = ""
@@ -22,6 +23,8 @@ class Settings(BaseSettings):
     # token过期时间（分钟）
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 720
 
+    class Config:
+        env_file = "../.env"
 
 try:
     # noinspection PyArgumentList
