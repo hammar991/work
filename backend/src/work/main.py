@@ -13,5 +13,4 @@ for r_base in [require, auth]:
 
 if __name__ == "__main__":
     from uvicorn import run
-    from os import environ
     run(app, host="0.0.0.0", port=8000)

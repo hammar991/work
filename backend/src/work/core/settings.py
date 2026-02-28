@@ -22,8 +22,6 @@ class Settings(BaseSettings):
     # token过期时间（分钟）
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 720
 
-    class Config:
-        env_file = "../.env"
 
 try:
     # noinspection PyArgumentList
