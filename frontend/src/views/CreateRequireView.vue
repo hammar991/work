@@ -23,10 +23,16 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 
+import { useClient } from '@/client/client'
+
+const client = useClient()
+
 const requireMeta = reactive({
   title: '',
   content: '',
 })
 
-const submitRequire = async () => {}
+const submitRequire = async () => {
+  await client.submitRequire(requireMeta)
+}
 </script>

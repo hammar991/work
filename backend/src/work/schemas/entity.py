@@ -12,7 +12,7 @@ class User(SQLModel, table=True):
 
     serial: int | None = Field(primary_key=True, unique=True)
     alias: str = ""
-    unique_id: str = Field(default_factory=utils.gen_uuid, nullable=False)
+    unique_id: str = Field(default_factory=utils.gen_nuid, nullable=False)
     oidc_id: str
 
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from work.api import require
 
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 
 for r_base in [require]:

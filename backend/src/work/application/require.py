@@ -2,14 +2,14 @@ from sqlmodel import Session, select
 
 from work.schemas.dto import CreateRequireDTO
 from typing import Iterable
-from work.schemas.entity import Require
+from work.schemas.entity import Require, User
 
 
 class RequireApplication:
     def __init__(self, db: Session):
         self._s = db
 
-    def create(self, payload: CreateRequireDTO):
+    def create(self, payload: CreateRequireDTO, user: User) -> Require:
         data = Require.model_validate(payload.model_dump())
         self._s.add(data)
 
