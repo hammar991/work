@@ -1,30 +1,29 @@
 from sqlmodel import Session, select
 
-from work.schemas.dto import CreateTaskDTO
+from work.schemas.dto import CreateProjectDTO
 from typing import Iterable
-from work.schemas.entity import Task, User
+from work.schemas.entity import Project, User
 
 
-class TaskApplication:
+class ProjectApplication:
     def __init__(self, db: Session):
         self._s = db
 
-    def create(self, payload: CreateTaskDTO, user: User):
-        data = Task(
+    def create(self, payload: CreateProjectDTO, user: User):
+        data = Project(
             title=payload.title,
             content=payload.content,
             link=payload.link,
-            owner=user.unique_id,
             create_by=user.unique_id,
         )
         self._s.add(data)
 
-    def list_all(self) -> Iterable[Task]:
-        statement = select(Task)
+    def list_all(self) -> Iterable[Project]:
+        statement = select(Project)
         resp = self._s.exec(statement).all()
         return resp
 
-    def search_by_title(self, title: str) -> Iterable[Task]:
-        statement = select(Task).where(Task.name.ilike(f"%{title}%"))
+    def search_by_title(self, title: str) -> Iterable[Project]:
+        statement = select(Project).where(Project.name.ilike(f"%{title}%"))
         resp = self._s.exec(statement).all()
         return resp
