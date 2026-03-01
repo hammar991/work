@@ -128,4 +128,4 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise HTTPException(status_code=401, detail='无法验证凭证！')
 
 
-AuthDependency = Annotated[User, Depends(get_auth_service)]
+AuthDependency: type[User] = Annotated[User, Depends(get_current_user)]
