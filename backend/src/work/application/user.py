@@ -1,9 +1,11 @@
 from typing import Optional
-from sqlmodel import Session, select
+from sqlmodel import Session
+from sqlmodel import select
+
 from work.schemas.entity import User
 
 
-class UserAdapter:
+class UserApplication:
     def __init__(self, session: Session):
         self.session = session
 

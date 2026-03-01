@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Dict, Any
+from typing import Dict, Any, Annotated
+from typing import Optional
 
 import jwt
 # noinspection PyUnresolvedReferences
@@ -8,17 +9,31 @@ from fastapi import Request, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError
 from sqlmodel import Session
+from sqlmodel import select
 
 from work.adapter.sql import get_db_session
-from work.adapter.user import UserAdapter
 from work.core.settings import SETTING
 from work.schemas.entity import User
+
+
+class UserAuthApplication:
+    def __init__(self, session: Session):
+        self.session = session
+
+    def get_by_oidc_id(self, oidc_id: str) -> Optional[User]:
+        statement = select(User).where(User.oidc_id == oidc_id)
+        return self.session.exec(statement).first()
+
+    def create(self, user: User) -> User:
+        self.session.add(user)
+        self.session.refresh(user)
+        return user
 
 
 class AuthService:
     def __init__(self, session: Session):
         self.oauth = OAuth()
-        self.user_adapter = UserAdapter(session)
+        self.user_adapter = UserAuthApplication(session)
         
         # 配置 OIDC 提供商
         self.oauth.register(
@@ -31,7 +46,6 @@ class AuthService:
 
     def decode_jwt_no_verify(self, token):
         _ = self
-        # return jwt.decode(token, key=SETTING.audience, algorithms=["RS256"])
         return jwt.decode(token, options={"verify_signature": False}, audience=SETTING.audience, algorithms=["RS256"], key="")
 
     async def login(self, request: Request, provider_name: str):
@@ -43,10 +57,8 @@ class AuthService:
         client = self.oauth.create_client(provider_name)
         # 获取用户信息
         token = await client.authorize_access_token(request)
-        # logger.debug(token)
         oidc_jwt = token.get('access_token')
         user_info = self.decode_jwt_no_verify(oidc_jwt)
-        # logger.debug(user_info)
 
         if not user_info:
             raise HTTPException(status_code=401, detail='获取用户信息！')
@@ -107,7 +119,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         payload = jwt.decode(token, SETTING.SECRET_KEY, algorithms=[SETTING.ALGORITHM])
         oidc_id = payload.get('sub')
         # 这里需要根据实际的 OIDC 提供商配置来解码
-        user_adapter = UserAdapter(session)
+        user_adapter = UserAuthApplication(session)
         user = user_adapter.get_by_oidc_id(oidc_id=oidc_id)
         return user
     except jwt.ExpiredSignatureError:
@@ -116,4 +128,4 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise HTTPException(status_code=401, detail='无法验证凭证！')
 
 
-
+AuthDependency = Annotated[User, Depends(get_auth_service)]

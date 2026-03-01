@@ -2,17 +2,15 @@ from fastapi import APIRouter
 
 from work.adapter.sql import DBSessionDependency
 from work.schemas.dto import CreateRequireDTO
-from work.adapter.auth import MockUser, TokenDependency
+from work.application.auth import AuthDependency
 from work.application.require import RequireApplication
 
 router = APIRouter(prefix="/require", tags=["require"])
 
 
 @router.post("/create/")
-async def require(data: CreateRequireDTO, session: DBSessionDependency, token: TokenDependency):
-    u = MockUser(session)
+async def require(data: CreateRequireDTO, session: DBSessionDependency, user: AuthDependency):
     a = RequireApplication(session)
-    user= u.get_user(token)
     a.create(data, user)
     return {"status": "ok"}
 
