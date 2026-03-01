@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     # 回调地址，需要在 OIDC 控制台配置白名单
     REDIRECT_URI: str
     OIDC_SCOPE: str = '["openid", "email", "profile"]'  # 需要改
-
+    secret_key: str
     # jwt访问令牌
     SECRET_KEY :str
     ALGORITHM: str = "HS256"

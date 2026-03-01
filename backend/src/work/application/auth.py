@@ -1,15 +1,15 @@
 from datetime import datetime, timedelta, timezone
-from typing import Dict, Any, Annotated
-from typing import Optional
+from typing import Dict, Any, Annotated, Optional
 
 import jwt
+from authlib.integrations.base_client.errors import OAuthError, MismatchingStateError
 # noinspection PyUnresolvedReferences
 from authlib.integrations.starlette_client import OAuth
 from fastapi import Request, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError
-from sqlmodel import Session
-from sqlmodel import select
+from loguru import logger
+from sqlmodel import Session, select
 
 from work.adapter.sql import get_db_session
 from work.core.settings import SETTING
@@ -50,56 +50,64 @@ class AuthService:
 
     async def login(self, request: Request, provider_name: str):
         client = self.oauth.create_client(provider_name)
-        redirect_url = request.url_for("auth_callback", provider_name=provider_name)
+        redirect_url = "http://localhost:5173/login"
         return await client.authorize_redirect(request, redirect_url)
 
     async def callback(self, request: Request, provider_name: str) -> Dict[str, Any]:
-        client = self.oauth.create_client(provider_name)
-        # 获取用户信息
-        token = await client.authorize_access_token(request)
-        oidc_jwt = token.get('access_token')
-        user_info = self.decode_jwt_no_verify(oidc_jwt)
+        try:
+            client = self.oauth.create_client(provider_name)
+            # 获取用户信息
+            token = await client.authorize_access_token(request)
+            oidc_jwt = token.get('access_token')
+            user_info = self.decode_jwt_no_verify(oidc_jwt)
 
-        if not user_info:
-            raise HTTPException(status_code=401, detail='获取用户信息！')
+            if not user_info:
+                raise HTTPException(status_code=401, detail='获取用户信息！')
 
-        # 获取唯一身份标识
-        oidc_id = user_info.get('sub')
-        if not oidc_id:
-            raise HTTPException(status_code=401, detail='OIDC获取身份标识失败！')
-        
-        # 查找或创建用户
-        user = self.user_adapter.get_by_oidc_id(oidc_id)
+            # 获取唯一身份标识
+            oidc_id = user_info.get('sub')
+            if not oidc_id:
+                raise HTTPException(status_code=401, detail='OIDC获取身份标识失败！')
 
-        if not user:
-            user = User(
-                oidc_id=oidc_id,
-                alias=user_info.get('name', '')
+            # 查找或创建用户
+            user = self.user_adapter.get_by_oidc_id(oidc_id)
+
+            if not user:
+                user = User(
+                    oidc_id=oidc_id,
+                    alias=user_info.get('name', '')
+                )
+                user = self.user_adapter.create(user)
+
+            # 内部 token
+            expire = datetime.now(timezone.utc) + timedelta(minutes=SETTING.ACCESS_TOKEN_EXPIRE_MINUTES)
+            internal_token = jwt.encode(
+                {
+                    "sub": user.oidc_id,
+                    "name": user.alias,
+                    "exp": expire
+                },
+                SETTING.SECRET_KEY,
+                algorithm=SETTING.ALGORITHM
             )
-            user = self.user_adapter.create(user)
 
-        # 内部 token
-        expire = datetime.now(timezone.utc) + timedelta(minutes=SETTING.ACCESS_TOKEN_EXPIRE_MINUTES)
-        internal_token = jwt.encode(
-            {
-                "sub": user.oidc_id,
-                "name": user.alias,
-                "exp": expire
-            },
-            SETTING.SECRET_KEY,
-            algorithm=SETTING.ALGORITHM
-        )
-        
-        return {
-            'access_token': internal_token,
-            'token_type': 'Bearer',
-            'user': {
-                'serial': user.serial,
-                'unique_id': user.unique_id,
-                'alias': user.alias,
-                'oidc_id': user.oidc_id
+            return {
+                'access_token': internal_token,
+                'token_type': 'Bearer',
+                'user': {
+                    'serial': user.serial,
+                    'unique_id': user.unique_id,
+                    'alias': user.alias,
+                    'oidc_id': user.oidc_id
+                }
             }
-        }
+        except MismatchingStateError as e:
+            logger.error(e)
+        except OAuthError as e:
+            logger.error(e)
+        except Exception as e:
+            logger.error(e)
+        return {}
 
     def get_user_by_oidc_id(self, oidc_id: str) -> Optional[User]:
         return self.user_adapter.get_by_oidc_id(oidc_id)

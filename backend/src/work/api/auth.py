@@ -19,12 +19,8 @@ async def login_redirect(request: Request, session: DBSessionDependency, provide
 @router.get("/callback/{provider_name}", tags=["oidc"])
 async def auth_callback(request: Request, session: DBSessionDependency, provider_name: str):
     """ 处理oidc返回结果 """
-    try:
-        auth_service = AuthService(session)
-        return await auth_service.callback(request, provider_name)
-    except MismatchingStateError as e:
-        logger.error(e)
-        return {}
+    auth_service = AuthService(session)
+    return await auth_service.callback(request, provider_name)
 
 
 @router.get("/me", tags=["oidc"])

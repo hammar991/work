@@ -1,15 +1,18 @@
-from work.api import require, auth
+from pathlib import Path
+
 from fastapi import FastAPI
 from loguru import logger
-from pathlib import Path
+from starlette.middleware.sessions import SessionMiddleware
+from work.core.settings import SETTING
+from work.api import require, auth, task, project
 
 SELF_SIGN_CA = Path("cert/self.crt")
 
 
 app = FastAPI(root_path="/api")
+app.add_middleware(SessionMiddleware, secret_key=SETTING.secret_key)
 
-
-for r_base in [require, auth]:
+for r_base in [require, auth, task, project]:
     app.include_router(r_base.router)
 
 

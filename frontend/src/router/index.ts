@@ -4,6 +4,8 @@ import CreateProjectView from '@/views/CreateProjectView.vue'
 import CreateRequireView from '@/views/CreateRequireView.vue'
 import CreateTaskView from '@/views/CreateTaskView.vue'
 import RequireView from '@/views/RequireView.vue'
+import ListTaskView from '@/views/ListTaskView.vue'
+import LoginView from '@/views/LoginView.vue'
 
 const routerMeta = [
   {
@@ -30,6 +32,16 @@ const routerMeta = [
     path: '/require',
     name: '需求列表',
     component: RequireView,
+  },
+  {
+    path: '/list-task',
+    name: '任务列表',
+    component: ListTaskView,
+  },
+  {
+    path: '/login',
+    name: '登录',
+    component: LoginView,
   },
 ]
 
