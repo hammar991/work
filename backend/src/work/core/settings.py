@@ -1,8 +1,8 @@
-from pydantic_settings import BaseSettings
-from pydantic import AnyUrl, ValidationError
-from loguru import logger
 from pathlib import Path
 
+from loguru import logger
+from pydantic import AnyUrl, ValidationError
+from pydantic_settings import BaseSettings
 
 logger.debug(list(Path().glob("*")))
 

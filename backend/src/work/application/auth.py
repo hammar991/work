@@ -1,17 +1,18 @@
-from typing import Optional, Dict, Any
 from datetime import datetime, timedelta, timezone
+from typing import Optional, Dict, Any
 
+import jwt
+# noinspection PyUnresolvedReferences
 from authlib.integrations.starlette_client import OAuth
-from loguru import logger
 from fastapi import Request, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import JWTError
 from sqlmodel import Session
-from jose import JWTError, jwt
 
-from work.adapter.user import UserAdapter
-from work.schemas.entity import User
-from work.core.settings import SETTING
 from work.adapter.sql import get_db_session
+from work.adapter.user import UserAdapter
+from work.core.settings import SETTING
+from work.schemas.entity import User
 
 
 class AuthService:

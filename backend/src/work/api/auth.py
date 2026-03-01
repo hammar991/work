@@ -1,9 +1,9 @@
+from authlib.integrations.base_client.errors import MismatchingStateError
 from fastapi import APIRouter, Request, Depends
 from loguru import logger
 
-from work.application.auth import AuthService, get_current_user
 from work.adapter.sql import DBSessionDependency
-from authlib.integrations.base_client.errors import MismatchingStateError
+from work.application.auth import AuthService, get_current_user
 
 router = APIRouter(prefix="/auth")
 
