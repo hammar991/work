@@ -22,15 +22,21 @@ const state = route.query.state as string || ''
 
 console.log([code, state])
 
+const LoginRedirect = () => {
+  if (client.isAuthenticated()) {
+  router.push({ path: '/' })
+}
+}
+
 if (code != '' && state != '') {
   client.callbackOIDC(code, state).then(data => {
     console.log(data)
+    LoginRedirect()
   })
 }
 
-if (client.isAuthenticated()) {
-  router.push({ path: '/' })
-}
+LoginRedirect()
+
 
 const loginOIDC = async () => {
   await client.setOidcProvider('Authentik')

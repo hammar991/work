@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, Annotated, Optional
 
-import jwt
+# import jwt
+from jwt import decode, encode
+from jwt.exceptions import DecodeError, ExpiredSignatureError
 from authlib.integrations.base_client.errors import OAuthError, MismatchingStateError
 # noinspection PyUnresolvedReferences
 from authlib.integrations.starlette_client import OAuth
@@ -46,7 +48,7 @@ class AuthService:
 
     def decode_jwt_no_verify(self, token):
         _ = self
-        return jwt.decode(token, options={"verify_signature": False}, audience=SETTING.audience, algorithms=["RS256"], key="")
+        return decode(token, options={"verify_signature": False}, audience=SETTING.audience, algorithms=["RS256"], key="")
 
     async def login(self, request: Request, provider_name: str):
         client = self.oauth.create_client(provider_name)
@@ -81,7 +83,7 @@ class AuthService:
 
             # 内部 token
             expire = datetime.now(timezone.utc) + timedelta(minutes=SETTING.ACCESS_TOKEN_EXPIRE_MINUTES)
-            internal_token = jwt.encode(
+            internal_token = encode(
                 {
                     "sub": user.oidc_id,
                     "name": user.alias,
@@ -124,14 +126,16 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     token = credentials.credentials     # 提取jwt
     try:
         # 解码 token 获取用户信息
-        payload = jwt.decode(token, SETTING.SECRET_KEY, algorithms=[SETTING.ALGORITHM])
+        payload = decode(token, SETTING.SECRET_KEY, algorithms=[SETTING.ALGORITHM])
         oidc_id = payload.get('sub')
         # 这里需要根据实际的 OIDC 提供商配置来解码
         user_adapter = UserAuthApplication(session)
         user = user_adapter.get_by_oidc_id(oidc_id=oidc_id)
         return user
-    except jwt.ExpiredSignatureError:
+    except ExpiredSignatureError:
         raise HTTPException(status_code=401, detail='Token 已过期！')
+    except DecodeError:
+        raise HTTPException(status_code=401, detail='Token 解析错误')
     except JWTError:
         raise HTTPException(status_code=401, detail='无法验证凭证！')
 

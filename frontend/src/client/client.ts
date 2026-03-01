@@ -6,34 +6,51 @@ interface CreateRequireDTO {
   content: string
 }
 
-const JSON_HEADER = {
-  'Content-Type': 'application/json',
+interface RequireEntity {
+  content: string
+  create_by: string
+  create_time: string
+  serial: number
+  title: string
 }
 
 export const useClient = defineStore('client', () => {
 
+  const getHeaders = () => {
+    return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${getLocalToken()}`,
+  }
+  }
+
   const oidcProvider = ref('Authentik')
-  const token = ref(localStorage.getItem('token') || '')
 
   const setOidcProvider = (provider: string) => {
     oidcProvider.value = provider
   }
 
+  const getLocalToken = () => {
+    return localStorage.getItem('token') || ""
+  }
+
+  const setLocalToken = (token: string) => {
+    localStorage.setItem('token', token)
+  }
+
   const isAuthenticated = () => {
-    return token.value != ''
+    const resp = "" != getLocalToken()
+    console.log(resp, getLocalToken())
+    return resp
   }
 
   const loginOIDC = async () => {
     window.location.href=`/api/auth/login/${oidcProvider.value}`
-    // const response = await fetch('/api/auth/login/')
-    // console.log(response)
   }
 
   const callbackOIDC = async (code: string, status: string) => {
     const response = await fetch(`/api/auth/callback/${oidcProvider.value}?code=${code}&state=${status}`)
     const data = await response.json()
-    token.value = data.access_token
-    localStorage.setItem('token', token.value)
+    setLocalToken(data.access_token)
     return data
   }
 
@@ -41,7 +58,7 @@ export const useClient = defineStore('client', () => {
     const response = await fetch('/api/require/create/', {
       method: 'POST',
       body: JSON.stringify(payload),
-      headers: JSON_HEADER,
+      headers: getHeaders(),
     })
     const data = await response.json()
     return data
@@ -50,7 +67,7 @@ export const useClient = defineStore('client', () => {
   const listRequire = async () => {
     const response = await fetch('/api/require/list/')
     const data = await response.json()
-    return data
+    return data as Array<RequireEntity>
   }
 
   const listTask = async () => {
@@ -58,7 +75,6 @@ export const useClient = defineStore('client', () => {
     const data = await response.json()
     return data
   }
-
 
   const searchRequire = async (require: string) => {
     const response = await fetch(`/api/require/search/${require}`)
@@ -68,3 +84,5 @@ export const useClient = defineStore('client', () => {
 
   return { loginOIDC,submitRequire, listRequire, searchRequire, listTask, callbackOIDC, setOidcProvider, isAuthenticated }
 })
+
+export type { RequireEntity }
