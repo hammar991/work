@@ -9,8 +9,12 @@ class RequireApplication:
     def __init__(self, db: Session):
         self._s = db
 
-    def create(self, payload: CreateRequireDTO, user: User) -> Require:
-        data = Require.model_validate(payload.model_dump())
+    def create(self, payload: CreateRequireDTO, user: User):
+        data = Require(
+            title=payload.title,
+            content=payload.content,
+            create_by=user.unique_id,
+        )
         self._s.add(data)
 
     def list_all(self) -> Iterable[Require]:
