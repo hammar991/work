@@ -24,10 +24,11 @@
 import { reactive } from 'vue'
 
 import { useClient } from '@/client/client'
+import type { CreateRequireDTO } from '@/types/dto'
 
 const client = useClient()
 
-const requireMeta = reactive({
+const requireMeta = reactive<CreateRequireDTO>({
   title: '',
   content: '',
 })
