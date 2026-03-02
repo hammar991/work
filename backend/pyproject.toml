@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.133.1",
-    "httpx>=0.28.1",
     "loguru>=0.7.3",
     "nanoid>=2.0.0",
     "passlib[bcrypt]>=1.7.4",
@@ -23,6 +22,7 @@ dependencies = [
     "itsdangerous>=2.2.0",
     "certifi>=2026.2.25",
     "pyjwt>=2.11.0",
+    "httpx>=0.28.1",
 ]
 #[[tool.uv.index]]
 #url = "http://10.21.0.55:8081/repository/pypi/simple"

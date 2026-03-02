@@ -1,12 +1,23 @@
 from pathlib import Path
+import certifi
+from loguru import logger
+
+
+SELF_SIGN_CA = Path("../cert/self.crt")
+logger.debug(list(Path(".").glob("*")))
+cert_path = certifi.where()
+
+# 添加自签名的SSL证书
+with SELF_SIGN_CA.open(mode="rb") as f:
+    certificate = f.read()
+    with open(cert_path, 'ab') as cert_file:
+        cert_file.write(certificate)
+
 
 from fastapi import FastAPI
-from loguru import logger
 from starlette.middleware.sessions import SessionMiddleware
 from work.core.settings import SETTING
 from work.api import require, auth, task, project
-
-SELF_SIGN_CA = Path("cert/self.crt")
 
 
 app = FastAPI(root_path="/api")
