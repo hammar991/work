@@ -32,24 +32,33 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import type { CreateTaskDTO } from '@/types/dto'
+import type { CreateTaskDTO, UniOptionsEntity } from '@/types/dto'
+import { useClient } from '@/client/client'
 
-const options = ref([
-  {
-    label: '需求1',
-    value: 0,
-  },
-  {
-    label: '需求2',
-    value: 1,
-  },
-])
+const client = useClient()
+
 
 const taskMeta = reactive<CreateTaskDTO>({
   title: '',
   link: -1,
-  content: '',
+  content: ''
 })
 
-const submitTask = async () => {}
+
+const options = ref<Array<UniOptionsEntity>>([])
+
+client.listProject().then((data) => {
+  options.value = []
+  data.forEach((i) => {
+    options.value.push({
+      label: i.title,
+      value: i.serial,
+    })
+  })
+})
+
+
+const submitTask = async () => {
+  await client.createTask(taskMeta)
+}
 </script>
