@@ -11,22 +11,22 @@ class Settings(BaseSettings):
 
     # OIDC 服务商配置
     # noinspection SpellCheckingInspection
-    OIDC_NAME : str = "Authentik"
-    OIDC_CLIENT_ID: str
-    OIDC_CLIENT_SECRET: str
+    oidc_name: str = "Authentik"
+    oidc_client_id: str
+    oidc_client_secret: str
     # 发现地址
-    OIDC_DISCOVERY_URL: str
+    oidc_discovery_url: str
     # 回调地址，需要在 OIDC 控制台配置白名单
-    REDIRECT_URI: str
-    OIDC_SCOPE: str = '["openid", "email", "profile"]'  # 需要改
+    redirect_uri: str
+    oidc_scope: str = '["openid", "email", "profile"]'  # 需要改
     secret_key: str
     # jwt访问令牌
-    SECRET_KEY :str
-    ALGORITHM: str = "HS256"
+    secret_key:str
+    algorithm: str = "HS256"
     audience: str
     
     # token过期时间（分钟）
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 720
+    access_token_expire_minutes: int = 720
 
     class Config:
         env_file = ".env"
