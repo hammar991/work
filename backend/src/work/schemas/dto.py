@@ -16,4 +16,3 @@ class CreateTaskDTO(BaseModel):
     title: str
     content: str
     link: int
-    owner: str

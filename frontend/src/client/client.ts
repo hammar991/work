@@ -1,7 +1,14 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-import type { CreateRequireDTO, CreateProjectDTO,RequireEntity } from '@/types/dto'
+import type {
+  CreateRequireDTO,
+  CreateProjectDTO,
+  CreateTaskDTO,
+  RequireEntity,
+  ProjectEntity,
+  TaskEntity
+ } from '@/types/dto'
 
 
 export const useClient = defineStore('client', () => {
@@ -63,7 +70,13 @@ export const useClient = defineStore('client', () => {
   const listTask = async () => {
     const response = await fetch('/api/task/list/')
     const data = await response.json()
-    return data
+    return data as Array<TaskEntity>
+  }
+
+  const listProject = async () => {
+    const response = await fetch('/api/project/list/')
+    const data = await response.json()
+    return data as Array<ProjectEntity>
   }
 
   const searchRequire = async (require: string) => {
@@ -80,5 +93,16 @@ const createProject = async (payload: CreateProjectDTO) => {
     const data = await response.json()
     return data
   }
-  return { loginOIDC,submitRequire, listRequire, searchRequire, listTask, callbackOIDC, setOidcProvider, isAuthenticated, createProject }
+
+const createTask = async (payload: CreateTaskDTO) => {
+    const response = await fetch('/api/task/create/', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: getHeaders(),
+    })
+    const data = await response.json()
+    console.log("data:", data)
+    return data
+  }
+  return { loginOIDC,submitRequire, listRequire, searchRequire, listTask, listProject, callbackOIDC, setOidcProvider, isAuthenticated, createProject, createTask }
 })
