@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useClient } from '@/client/client'
-import { type UniOptionsEntity } from '@/client/client'
+import { type UniOptionsEntity } from '@/types/dto'
 const client = useClient()
 
 const projectMeta = reactive({
