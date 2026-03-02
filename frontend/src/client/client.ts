@@ -1,30 +1,8 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-interface CreateRequireDTO {
-  title: string
-  content: string
-}
+import type { CreateRequireDTO, CreateProjectDTO,RequireEntity } from '@/types/dto'
 
-interface CreateProjectDTO {
-  title: string
-  link: number
-  content: string
-}
-
-interface RequireEntity {
-  content: string
-  create_by: string
-  create_time: string
-  serial: number
-  title: string
-}
-
-
-interface UniOptionsEntity {
-  label: number | string
-  value: number | string
-}
 
 export const useClient = defineStore('client', () => {
 
@@ -93,8 +71,7 @@ export const useClient = defineStore('client', () => {
     const data = await response.json()
     return data
   }
-
-  const createProject = async (payload: CreateProjectDTO) => {
+const createProject = async (payload: CreateProjectDTO) => {
     const response = await fetch('/api/project/create/', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -103,8 +80,5 @@ export const useClient = defineStore('client', () => {
     const data = await response.json()
     return data
   }
-
   return { loginOIDC,submitRequire, listRequire, searchRequire, listTask, callbackOIDC, setOidcProvider, isAuthenticated, createProject }
 })
-
-export type { RequireEntity, UniOptionsEntity }

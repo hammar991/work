@@ -32,6 +32,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
+import type { CreateTaskDTO } from '@/types/dto'
 
 const options = ref([
   {
@@ -43,7 +44,8 @@ const options = ref([
     value: 1,
   },
 ])
-const taskMeta = reactive({
+
+const taskMeta = reactive<CreateTaskDTO>({
   title: '',
   link: -1,
   content: '',

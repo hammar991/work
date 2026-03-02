@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { useClient } from '@/client/client'
 import { ref } from 'vue'
-import { type RequireEntity } from '@/client/client'
+import type { RequireEntity } from '@/types/dto'
 const client = useClient()
 
 const requireList = ref<Array<RequireEntity>>([])
