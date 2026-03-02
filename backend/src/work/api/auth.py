@@ -12,8 +12,12 @@ router = APIRouter(prefix="/auth")
 @router.get("/login/{provider_name}", tags=["oidc"])
 async def login_redirect(request: Request, session: DBSessionDependency, provider_name: str):
     """ 请求发给认证服务器 """
-    auth_service = AuthService(session)
-    return await auth_service.login(request, provider_name)
+    try:
+        auth_service = AuthService(session)
+        return await auth_service.login(request, provider_name)
+    except Exception as e:
+        logger.exception(e)
+        return {}
 
 
 @router.get("/callback/{provider_name}", tags=["oidc"])
