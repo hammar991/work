@@ -6,7 +6,7 @@
 
     <n-form ref="formRef" :label-width="80" :model="projectMeta">
       <n-form-item label="项目名称" path="user.name">
-        <n-input v-model:value="projectMeta.name" placeholder="输入项目" />
+        <n-input v-model:value="projectMeta.title" placeholder="输入项目" />
       </n-form-item>
 
       <n-form-item label="关联需求" path="user.name">
@@ -32,23 +32,30 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
+import { useClient } from '@/client/client'
+import { type UniOptionsEntity } from '@/client/client'
+const client = useClient()
 
 const projectMeta = reactive({
-  name: '',
+  title: '',
   link: -1,
   content: '',
 })
 
-const options = ref([
-  {
-    label: '需求1',
-    value: 0,
-  },
-  {
-    label: '需求2',
-    value: 1,
-  },
-])
 
-const submitProject = async () => {}
+const options = ref<Array<UniOptionsEntity>>([])
+
+client.listRequire().then((res) => {
+  options.value = []
+  res.forEach((i) => {
+    options.value.push({
+      label: i.title,
+      value: i.serial,
+    })
+  })
+})
+
+const submitProject = async () => {
+  await client.createProject(projectMeta)
+}
 </script>

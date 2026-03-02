@@ -6,12 +6,24 @@ interface CreateRequireDTO {
   content: string
 }
 
+interface CreateProjectDTO {
+  title: string
+  link: number
+  content: string
+}
+
 interface RequireEntity {
   content: string
   create_by: string
   create_time: string
   serial: number
   title: string
+}
+
+
+interface UniOptionsEntity {
+  label: number | string
+  value: number | string
 }
 
 export const useClient = defineStore('client', () => {
@@ -82,7 +94,17 @@ export const useClient = defineStore('client', () => {
     return data
   }
 
-  return { loginOIDC,submitRequire, listRequire, searchRequire, listTask, callbackOIDC, setOidcProvider, isAuthenticated }
+  const createProject = async (payload: CreateProjectDTO) => {
+    const response = await fetch('/api/project/create/', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: getHeaders(),
+    })
+    const data = await response.json()
+    return data
+  }
+
+  return { loginOIDC,submitRequire, listRequire, searchRequire, listTask, callbackOIDC, setOidcProvider, isAuthenticated, createProject }
 })
 
-export type { RequireEntity }
+export type { RequireEntity, UniOptionsEntity }
