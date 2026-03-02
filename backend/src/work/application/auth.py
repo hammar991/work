@@ -39,11 +39,11 @@ class AuthService:
         
         # 配置 OIDC 提供商
         self.oauth.register(
-            name=SETTING.OIDC_NAME,
-            client_id=SETTING.OIDC_CLIENT_ID,
-            client_secret=SETTING.OIDC_CLIENT_SECRET,
-            server_metadata_url=SETTING.OIDC_DISCOVERY_URL,
-            scope=SETTING.OIDC_SCOPE
+            name=SETTING.oidc_name,
+            client_id=SETTING.oidc_client_id,
+            client_secret=SETTING.oidc_client_secret,
+            server_metadata_url=SETTING.oidc_discovery_url,
+            scope=SETTING.oidc_scope
         )
 
     def decode_jwt_no_verify(self, token):
@@ -82,15 +82,15 @@ class AuthService:
                 user = self.user_adapter.create(user)
 
             # 内部 token
-            expire = datetime.now(timezone.utc) + timedelta(minutes=SETTING.ACCESS_TOKEN_EXPIRE_MINUTES)
+            expire = datetime.now(timezone.utc) + timedelta(minutes=SETTING.access_token_expire_minutes)
             internal_token = encode(
                 {
                     "sub": user.oidc_id,
                     "name": user.alias,
                     "exp": expire
                 },
-                SETTING.SECRET_KEY,
-                algorithm=SETTING.ALGORITHM
+                SETTING.secret_key,
+                algorithm=SETTING.algorithm
             )
 
             return {
@@ -126,7 +126,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     token = credentials.credentials     # 提取jwt
     try:
         # 解码 token 获取用户信息
-        payload = decode(token, SETTING.SECRET_KEY, algorithms=[SETTING.ALGORITHM])
+        payload = decode(token, SETTING.secret_key, algorithms=[SETTING.algorithm])
         oidc_id = payload.get('sub')
         # 这里需要根据实际的 OIDC 提供商配置来解码
         user_adapter = UserAuthApplication(session)
