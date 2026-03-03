@@ -1,6 +1,3 @@
-import type { NumberLiteralType } from "typescript"
-import { C } from "vue-router/dist/options-D40y7AuF.mjs"
-
 
 // 任务状态 枚举
 const TaskStatus ={
@@ -19,8 +16,8 @@ interface CreateRequireDTO {
 }
 
 interface CreateProjectDTO {
-  title: String
-  content: String
+  title: string
+  content: string
   link: number
 }
 
@@ -37,7 +34,7 @@ interface UniOptionsEntity {
 
 interface UserEntity {
   serial: number
-  eloas: string
+  alias: string
   unique_id: number
   oidc_id: string
 }
