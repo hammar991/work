@@ -19,8 +19,8 @@ interface CreateRequireDTO {
 }
 
 interface CreateProjectDTO {
-  title: String
-  content: String
+  title: string
+  content: string
   link: number
 }
 
@@ -37,7 +37,7 @@ interface UniOptionsEntity {
 
 interface UserEntity {
   serial: number
-  eloas: string
+  alias: string
   unique_id: number
   oidc_id: string
 }
