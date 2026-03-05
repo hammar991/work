@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from work.adapter.sql import DBSessionDependency
-from work.schemas.dto import CreateTaskDTO
+from work.schemas.dto import CreateTaskDTO, UpdateTaskStatusDTO
 from work.application.auth import AuthDependency
 from work.application.task import TaskApplication
 
@@ -21,7 +21,20 @@ async def list_api(session: DBSessionDependency):
     return a.list_all()
 
 
+@router.get("/search/link/{link}/", tags=["task"])
+async def search_by_link(link: int, session: DBSessionDependency):
+    a = TaskApplication(session)
+    return a.search_by_link(link)
+
+
 @router.get("/search/{keyword}/", tags=["task"])
 async def search_api(keyword: str, session: DBSessionDependency):
     a = TaskApplication(session)
     return a.search_by_title(keyword)
+
+
+@router.put("/update/status/", tags=["task"])
+async def update_status_api(data: UpdateTaskStatusDTO, session: DBSessionDependency, user: AuthDependency):
+    a = TaskApplication(session)
+    return a.update_status(data)
+
