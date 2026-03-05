@@ -34,7 +34,12 @@
 import { reactive, ref } from 'vue'
 import { useClient } from '@/client/client'
 import { type UniOptionsEntity } from '@/types/dto'
+import { useMessage } from 'naive-ui'
+import { useRouter }  from 'vue-router'
+
 const client = useClient()
+const message = useMessage()
+const router = useRouter()
 
 const projectMeta = reactive({
   title: '',
@@ -56,6 +61,19 @@ client.listRequire().then((res) => {
 })
 
 const submitProject = async () => {
-  await client.createProject(projectMeta)
+  try{
+
+    const res = await client.createProject(projectMeta)
+    if (res) {
+      message.success("创建项目成功")
+      router.push({ path: '/' })
+    }
+    else {
+      message.error("创建项目失败")
+    }
+  } catch (err) {
+    console.error("创建项目失败:", err)
+  }
 }
+
 </script>
