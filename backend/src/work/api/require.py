@@ -20,6 +20,12 @@ async def list_api(session: DBSessionDependency):
     a = RequireApplication(session)
     return a.list_all()
 
+@router.get("/search/serial/{serial}/", tags=["require"])
+async def search_by_id(serial: int, session: DBSessionDependency):
+    a = RequireApplication(session)
+    return a.search_by_id(serial)
+
+
 
 @router.get("/search/{keyword}/", tags=["require"])
 async def search_api(keyword: str, session: DBSessionDependency):

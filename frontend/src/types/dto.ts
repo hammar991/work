@@ -32,6 +32,11 @@ interface UniOptionsEntity {
   value: number | string
 }
 
+interface UpdateTaskStatusDTO {
+  serial: number
+  status: TaskStatusType
+}
+
 interface UserEntity {
   serial: number
   alias: string
@@ -80,6 +85,7 @@ export type {
   CreateProjectDTO,
   CreateTaskDTO,
   UniOptionsEntity,
+  UpdateTaskStatusDTO,
   UserEntity,
   RequireEntity,
   ProjectEntity,

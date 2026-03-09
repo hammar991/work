@@ -25,8 +25,12 @@ import { reactive } from 'vue'
 
 import { useClient } from '@/client/client'
 import type { CreateRequireDTO } from '@/types/dto'
+import { useMessage } from 'naive-ui'
+import { useRouter }  from 'vue-router'
 
 const client = useClient()
+const message = useMessage()
+const router = useRouter()
 
 const requireMeta = reactive<CreateRequireDTO>({
   title: '',
@@ -34,6 +38,18 @@ const requireMeta = reactive<CreateRequireDTO>({
 })
 
 const submitRequire = async () => {
-  await client.submitRequire(requireMeta)
+  try{
+    const res = await client.submitRequire(requireMeta)
+    console.log('111',res)
+    if (res) {
+      message.success("创建项目成功")
+      router.push({ path: '/' })
+    }
+    else {
+      message.error("创建项目失败")
+    }
+  } catch (err) {
+    console.error("创建需求失败:", err)
+  }
 }
 </script>

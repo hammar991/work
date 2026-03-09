@@ -34,8 +34,12 @@
 import { reactive, ref } from 'vue'
 import type { CreateTaskDTO, UniOptionsEntity } from '@/types/dto'
 import { useClient } from '@/client/client'
+import { useMessage } from 'naive-ui'
+import { useRouter }  from 'vue-router'
 
 const client = useClient()
+const message = useMessage()
+const router = useRouter()
 
 
 const taskMeta = reactive<CreateTaskDTO>({
@@ -59,6 +63,17 @@ client.listProject().then((data) => {
 
 
 const submitTask = async () => {
-  await client.createTask(taskMeta)
+  try{
+    const res = await client.createTask(taskMeta)
+    if (res) {
+      message.success("创建任务成功")
+      router.push({ path: '/' })
+    }
+    else {
+      message.error("创建任务失败")
+    }
+  } catch (err) {
+    console.error("创建任务失败:", err)
+  }
 }
 </script>

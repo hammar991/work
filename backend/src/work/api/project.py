@@ -21,6 +21,17 @@ async def list_api(session: DBSessionDependency):
     return a.list_all()
 
 
+@router.get("/search/serial/{serial}/", tags=["project"])
+async def search_by_id(serial: int, session: DBSessionDependency):
+    a = ProjectApplication(session)
+    return a.search_by_id(serial)
+
+
+@router.get("/search/link/{link}/", tags=["project"])
+async def search_by_link(link: int, session: DBSessionDependency):
+    a = ProjectApplication(session)
+    return a.search_by_link(link)
+
 @router.get("/search/{keyword}/", tags=["project"])
 async def search_api(keyword: str, session: DBSessionDependency):
     a = ProjectApplication(session)

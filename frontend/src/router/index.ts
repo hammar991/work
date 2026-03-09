@@ -7,6 +7,7 @@ import ListTaskView from '@/views/ListTaskView.vue'
 import LoginView from '@/views/LoginView.vue'
 import ListRequireView from '@/views/ListRequireView.vue'
 import ListProjectView from '@/views/ListProjectView.vue'
+import ProjectDetailView from '@/views/ProjectDetailView.vue'
 
 const routerMeta = [
   {
@@ -49,6 +50,12 @@ const routerMeta = [
     name: '需求列表',
     component: ListRequireView,
   },
+  {
+    path:'/project-detail/:keyword',
+    name:'项目详情',
+    component:ProjectDetailView,
+    props:true,
+  }
 ]
 
 const router = createRouter({

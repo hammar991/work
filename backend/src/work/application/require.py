@@ -23,6 +23,11 @@ class RequireApplication:
         return resp
 
     def search_by_title(self, title: str) -> Iterable[Require]:
-        statement = select(Require).where(Require.name.ilike(f"%{title}%"))
+        statement = select(Require).where(Require.title.ilike(f"%{title}%"))
         resp = self._s.exec(statement).all()
+        return resp
+
+    def search_by_id(self, id: int) -> Iterable[Require]:
+        statement = select(Require).where(Require.serial == id)
+        resp = self._s.exec(statement).one_or_none()
         return resp

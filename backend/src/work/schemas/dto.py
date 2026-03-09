@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from work.schemas.enums import TaskStatus
 
 
 class CreateRequireDTO(BaseModel):
@@ -16,3 +17,8 @@ class CreateTaskDTO(BaseModel):
     title: str
     content: str
     link: int
+
+
+class UpdateTaskStatusDTO(BaseModel):
+    serial: int
+    status: TaskStatus

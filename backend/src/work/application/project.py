@@ -24,6 +24,16 @@ class ProjectApplication:
         return resp
 
     def search_by_title(self, title: str) -> Iterable[Project]:
-        statement = select(Project).where(Project.name.ilike(f"%{title}%"))
+        statement = select(Project).where(Project.title.ilike(f"%{title}%"))
         resp = self._s.exec(statement).all()
+        return resp
+
+    def search_by_id(self, id: int) -> Iterable[Project]:
+        statement = select(Project).where(Project.serial == id)
+        resp = self._s.exec(statement).one_or_none()
+        return resp
+
+    def search_by_link(self, link: int) -> Iterable[Project]:
+        statement = select(Project).where(Project.link == link)
+        resp = self._s.exec(statement).one_or_none()
         return resp
