@@ -1,4 +1,4 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, select, col
 
 from work.schemas.dto import CreateTaskDTO, UpdateTaskStatusDTO
 from typing import Iterable
@@ -25,7 +25,7 @@ class TaskApplication:
         return resp
 
     def search_by_title(self, title: str) -> Iterable[Task]:
-        statement = select(Task).where(Task.title.ilike(f"%{title}%"))
+        statement = select(Task).where(col(Task.title).ilike(f"%{title}%"))
         resp = self._s.exec(statement).all()
         return resp
 

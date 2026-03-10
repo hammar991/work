@@ -1,10 +1,10 @@
 from datetime import datetime
-
+from typing import List
 from sqlalchemy import VARCHAR
 
 from work.schemas.enums import TaskStatus
 from work.utils import utils
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
 
 
 class User(SQLModel, table=True):
@@ -27,6 +27,8 @@ class Require(SQLModel, table=True):
     create_by: str
     create_time: datetime = Field(default_factory=datetime.now, nullable=False)
 
+    project: List["Project"] = Relationship(back_populates="require")
+
 
 class Project(SQLModel, table=True):
     __tablename__ = "project"
@@ -39,6 +41,9 @@ class Project(SQLModel, table=True):
 
     create_by: str
     create_time: datetime = Field(default_factory=datetime.now, nullable=False)
+
+    require: Require = Relationship(back_populates="project")
+    tasks: List["Task"] = Relationship(back_populates="project")
 
 
 class Task(SQLModel, table=True):
@@ -56,6 +61,8 @@ class Task(SQLModel, table=True):
     start_time: datetime = Field(default_factory=datetime.now, nullable=False)
     end_time: datetime = Field(default_factory=datetime.now, nullable=False)
     current_status: TaskStatus = Field(default=TaskStatus.PLANNED, sa_type=VARCHAR)
+
+    project: Project = Relationship(back_populates="tasks")
 
 
 def init_db(engine):
