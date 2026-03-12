@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { routerMeta } from '@/router/index'
+import { routerMeta } from '@/router/index.ts'
 </script>
+
 
 <template>
   主页

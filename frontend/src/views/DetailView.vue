@@ -112,7 +112,8 @@ import type { DataTableColumns } from 'naive-ui'
 import { TaskStatus } from '@/types/dto'
 import type { TaskStatusType } from '@/types/dto'
 import type { RequireEntity, ProjectEntity, TaskEntity, UpdateTaskStatusDTO } from '@/types/dto'
-
+import { MdPreview } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
 const route = useRoute()
 const client = useClient()
 const message = useMessage()
@@ -234,7 +235,14 @@ const createTaskColumns = (): DataTableColumns<TaskEntity> => [
   {
     title: "任务描述",
     key: 'content',
-    width: 250
+    width: 250,
+    render: (row: TaskEntity) => {
+      return h(MdPreview, {
+        modelValue: row.content,
+        theme: "dark",
+        previewOnly: true
+      })
+    }
   },
   {
     title: '负责人',
