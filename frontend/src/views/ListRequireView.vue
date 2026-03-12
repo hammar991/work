@@ -7,7 +7,9 @@
     <div v-for="require, index in requireList" :key="index">
       <n-card>
         <template #header>
-          <n-text type="primary">{{ require.title }}</n-text>
+          <n-text
+          @click="goToDetail(require.serial)"
+          type="primary">{{ require.title }}</n-text>
         </template>
       <n-text>{{ require.content }}</n-text>
       </n-card>
@@ -19,6 +21,9 @@
 import { useClient } from '@/client/client'
 import { ref } from 'vue'
 import type { RequireEntity } from '@/types/dto'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 const client = useClient()
 
 const requireList = ref<Array<RequireEntity>>([])
@@ -26,4 +31,11 @@ const requireList = ref<Array<RequireEntity>>([])
 client.listRequire().then(data => {
   requireList.value = data
 })
+
+const goToDetail = (serial: number) => {
+  router.push({
+    path: '/detail/',
+    query: { id: serial, type: 'require' }
+  })
+}
 </script>
