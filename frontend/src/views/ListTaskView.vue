@@ -9,7 +9,7 @@
         <template #header>
           <n-text
             type="primary"
-            @click="toProjectDetail(item.link)"
+            @click="goToDetail(item.serial)"
             >{{ item.title }}</n-text>
         </template>
         <n-text>{{ item.content }}</n-text>
@@ -34,8 +34,10 @@ client.listTask().then(data => {
   taskList.value = data
 })
 
-const toProjectDetail = async (link: number) => {
-  const res = await client.searchProjectBySerial(link)
-  router.push({ path: `/project-detail/${res.title}` })
+const goToDetail = async (serial: number) => {
+  router.push({
+    path: '/detail/',
+    query: { id: serial, type: 'task' }
+  })
 }
 </script>

@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import router from '@/router'
+import { useRouter }  from 'vue-router'
 
 import type {
   CreateRequireDTO,
@@ -14,6 +14,7 @@ import type {
 
 
 export const useClient = defineStore('client', () => {
+  const router = useRouter()
 
   const getHeaders = () => {
     return {
@@ -72,7 +73,7 @@ export const useClient = defineStore('client', () => {
 
     if (response.status == 401){
       removeLocalToken()
-      router.push('/login')
+      router.push({path:'/login'})
       throw new Error('401 token已过期,请重新登录!')
     }
     return response
@@ -89,62 +90,67 @@ export const useClient = defineStore('client', () => {
   }
 
   const listRequire = async () => {
-    const response = await fetch('/api/require/list/')
+    const response = await fetchWithAuth('/api/require/list/')
     const data = await response.json()
     return data as Array<RequireEntity>
   }
 
   const listTask = async () => {
-    const response = await fetch('/api/task/list/')
+    const response = await fetchWithAuth('/api/task/list/')
     const data = await response.json()
     return data as Array<TaskEntity>
   }
 
   const listProject = async () => {
-    const response = await fetch('/api/project/list/')
+    const response = await fetchWithAuth('/api/project/list/')
     const data = await response.json()
     return data as Array<ProjectEntity>
   }
 
+  const searchDetailBySerial = async (serial: number, type: string) => {
+    const url = `/api/detail/${serial}?type_str=${type}`
 
-  const searchProjectBySerial = async(serial: number) => {
-    const response = await fetch(`/api/project/search/serial/${serial}/`)
+    const response = await fetchWithAuth(url, {
+      method: 'GET',
+      headers: getHeaders(),
+    })
+
     const data = await response.json()
     return data
   }
 
   const searchProjectByLink = async (link: number) => {
-    const response = await fetch(`/api/project/search/link/${link}/`)
+    const response = await fetchWithAuth(`/api/project/search/link/${link}/`)
     const data = await response.json()
     return data
   }
 
   const searchProjectByTitle = async (project: string) => {
-    const response = await fetch(`/api/project/search/${project}/`)
+    const response = await fetchWithAuth(`/api/project/search/${project}/`)
     const data = await response.json()
     return data as Array<ProjectEntity>
   }
 
   const searchRequireBySerial = async (serial: number) => {
-    const response = await fetch(`/api/require/search/serial/${serial}/`)
+    const response = await fetchWithAuth(`/api/require/search/serial/${serial}/`)
     const data = await response.json()
     return data as RequireEntity
   }
 
   const searchRequireByTitle = async (require: string) => {
-    const response = await fetch(`/api/require/search/${require}/`)
+    const response = await fetchWithAuth(`/api/require/search/${require}/`)
     const data = await response.json()
     return data as Array<RequireEntity>
   }
 
   const searchTasktByLink = async (link: number) => {
-    const response = await fetch(`/api/task/search/link/${link}/`)
+    const response = await fetchWithAuth(`/api/task/search/link/${link}/`)
     const data = await response.json()
     return data as Array<TaskEntity>
   }
 
   const searchTaskByTitle = async (task: string) => {
-    const response = await fetch(`/api/task/search/${task}/`)
+    const response = await fetchWithAuth(`/api/task/search/${task}/`)
     const data = await response.json()
     return data as Array<TaskEntity>
   }
@@ -189,7 +195,7 @@ export const useClient = defineStore('client', () => {
     callbackOIDC,
     setOidcProvider,
     isAuthenticated,
-    searchProjectBySerial,
+    searchDetailBySerial,
     searchProjectByLink,
     searchProjectByTitle,
     searchRequireBySerial,
@@ -201,7 +207,3 @@ export const useClient = defineStore('client', () => {
     createTask
   }
 })
-
-
-// 详情页面
-// 任务状态切换

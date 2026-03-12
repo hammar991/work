@@ -31,3 +31,4 @@ async def search_by_id(serial: int, session: DBSessionDependency):
 async def search_api(keyword: str, session: DBSessionDependency):
     a = RequireApplication(session)
     return a.search_by_title(keyword)
+

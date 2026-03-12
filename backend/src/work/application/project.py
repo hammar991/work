@@ -28,12 +28,12 @@ class ProjectApplication:
         resp = self._s.exec(statement).all()
         return resp
 
-    def search_by_id(self, search_id: int) -> Project:
+    def search_by_id(self, search_id: int) :
         statement = select(Project).where(Project.serial == search_id)
         resp = self._s.exec(statement).one_or_none()
         return resp
 
-    def search_by_link(self, link: int) -> Project:
+    def search_by_link(self, link: int) :
         statement = select(Project).where(Project.link == link)
         resp = self._s.exec(statement).one_or_none()
         return resp

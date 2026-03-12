@@ -9,7 +9,7 @@
         <template #header>
           <n-text
             type="primary"
-            @click="goToDetail(item.title)"
+            @click="goToDetail(item.serial)"
             >{{ item.title }}</n-text>
         </template>
         <n-text>{{ item.content }}</n-text>
@@ -35,8 +35,10 @@ client.listProject().then(data => {
 })
 
 
-const goToDetail = (keyword: string) => {
-  console.log(keyword)
-  router.push({ name: '项目详情', params: { keyword } })
+const goToDetail = (serial: number) => {
+  router.push({
+    path: '/detail/',
+    query: { id: serial, type: 'project' }
+  })
 }
 </script>
