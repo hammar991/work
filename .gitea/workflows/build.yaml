@@ -49,6 +49,7 @@ jobs:
       - run: git clone https://gitea.company.com/${{gitea.repository}}
       - run: ls
       - run: ls work
+      - run: ls work/backend
       - run: cd ~/work/backend
       - run: |
           ls ${{ gitea.workspace }}
