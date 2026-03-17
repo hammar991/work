@@ -15,5 +15,5 @@ COPY src/ ./src/
 RUN uv pip install -e .
 
 ENV PYTHONPATH=/app/src
-
+EXPOSE 8000
 CMD ["uv", "run", "-m", "work.main"]
