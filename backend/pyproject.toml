@@ -9,7 +9,6 @@ dependencies = [
     "loguru>=0.7.3",
     "nanoid>=2.0.0",
     "passlib[bcrypt]>=1.7.4",
-    "psycopg2>=2.9.11",
     "pydantic-settings>=2.13.1",
     "python-jose[cryptography]>=3.5.0",
     "python-multipart>=0.0.22",
@@ -23,6 +22,7 @@ dependencies = [
     "certifi>=2026.2.25",
     "pyjwt>=2.11.0",
     "httpx>=0.28.1",
+    "psycopg2-binary>=2.9.11",
 ]
 [[tool.uv.index]]
 url = "http://10.21.0.55:8081/repository/pypi/simple"
