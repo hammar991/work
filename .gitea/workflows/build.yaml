@@ -48,6 +48,7 @@ jobs:
       - run: cd ~
       - run: git clone https://gitea.company.com/${{gitea.repository}}
       - run: ls
+      - run: ls work
       - run: cd ~/work/frontend
       - run: |
           ls ${{ gitea.workspace }}
