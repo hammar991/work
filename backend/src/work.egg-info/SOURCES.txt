@@ -9,6 +9,7 @@ src/work.egg-info/top_level.txt
 src/work/adapter/sql.py
 src/work/api/auth.py
 src/work/api/project.py
+src/work/api/query.py
 src/work/api/require.py
 src/work/api/task.py
 src/work/application/auth.py

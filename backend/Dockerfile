@@ -6,11 +6,12 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
 COPY pyproject.toml uv.lock ./
+
 RUN uv venv
 RUN uv lock
 RUN uv sync
 
-COPY ./src/ ./src/
+COPY src/ ./src/
 RUN uv pip install -e .
 
 ENV PYTHONPATH=/app/src
