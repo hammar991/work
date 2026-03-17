@@ -47,6 +47,7 @@ jobs:
       - run: echo "🔎 分支 ${{ gitea.ref }} 存储库 ${{ gitea.repository }}."
       - run: cd ~
       - run: git clone https://gitea.company.com/${{gitea.repository}}
+      - run: ls
       - run: cd ~/work/frontend
       - run: |
           ls ${{ gitea.workspace }}
