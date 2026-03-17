@@ -3,7 +3,7 @@ import certifi
 from loguru import logger
 
 
-SELF_SIGN_CA = Path("../cert/self.crt")
+SELF_SIGN_CA = Path("cert/self.crt")
 logger.debug(list(Path(".").glob("*")))
 cert_path = certifi.where()
 
