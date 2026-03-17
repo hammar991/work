@@ -1,47 +1,60 @@
-# use the official Bun image
-# see all versions at https://hub.docker.com/r/oven/bun/tags
+# ============================================
+# Stage 1: 基础镜像
+# ============================================
 FROM 127.0.0.1:5000/docker.io/oven/bun:1 AS base
 WORKDIR /usr/src/app
 
-# install dependencies into temp directory
-# this will cache them and speed up future builds
-FROM base AS install
-RUN mkdir -p /temp/dev
-COPY package.json bun.lock bunfig.toml /temp/dev/
-RUN cd /temp/dev && bun install --frozen-lockfile
+# ============================================
+# Stage 2: 安装依赖
+# ============================================
+FROM base AS deps
 
-# install with --production (exclude devDependencies)
-RUN mkdir -p /temp/prod
-COPY package.json bun.lock /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
+# 仅复制依赖描述文件
+COPY package.json bun.lock bunfig.toml ./
 
-# copy node_modules from temp directory
-# then copy all (non-ignored) project files into the image
-FROM base AS prerelease
-COPY --from=install /temp/dev/node_modules node_modules
+# 安装所有依赖（包含 devDependencies，构建阶段需要）
+RUN bun install --frozen-lockfile
+
+# ============================================
+# Stage 3: 构建
+# ============================================
+FROM base AS build
+
+# 复制依赖
+COPY --from=deps /usr/src/app/node_modules ./node_modules
+
+# 复制源代码
 COPY . .
 
-# [optional] tests & build
+# 设置环境变量
 ENV NODE_ENV=production
-RUN bun vite build
 
-# copy production dependencies and source code into final image
-# 使用 static-web-server 镜像（Rust 编写，约 3MB）
+# 执行构建
+RUN bun run build
+
+# ============================================
+# Stage 4: 最终运行镜像
+# ============================================
 FROM 127.0.0.1:5000/docker.io/joseluisq/static-web-server:2
 
-# 设置服务端口
+# 基础配置
 ENV SERVER_PORT=80
-# 设置网页根目录
 ENV SERVER_ROOT=/var/www
-# 启用目录列表（可选）
-ENV SERVER_DIRECTORY_LISTING=true
-# 启用压缩
+
+# 安全配置：关闭目录列表
+ENV SERVER_DIRECTORY_LISTING=false
+
+# 性能配置：开启 gzip/brotli 压缩
 ENV SERVER_COMPRESSION=true
+
 # 日志级别
-ENV SERVER_LOG_LEVEL=info
+ENV SERVER_LOG_LEVEL=warn
 
-# 复制静态文件到容器
-COPY dist/ /var/www/
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
 
-# 暴露端口
+# 从构建阶段复制构建产物
+COPY --from=build /usr/src/app/dist /var/www
+
 EXPOSE 80
