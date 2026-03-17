@@ -26,11 +26,8 @@ COPY --from=deps /usr/src/app/node_modules ./node_modules
 # 复制源代码
 COPY . .
 
-# 设置环境变量
-ENV NODE_ENV=production
-
 # 执行构建
-RUN bun run build
+RUN bun vite build
 
 # ============================================
 # Stage 4: 最终运行镜像
