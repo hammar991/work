@@ -16,4 +16,4 @@ RUN uv pip install -e .
 
 ENV PYTHONPATH=/app/src
 
-CMD ["uv", "run", "-m", "task_next.main"]
+CMD ["uv", "run", "-m", "work.main"]
