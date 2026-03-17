@@ -52,7 +52,7 @@ class AuthService:
 
     async def login(self, request: Request, provider_name: str):
         client = self.oauth.create_client(provider_name)
-        redirect_url = "http://localhost:5173/login"
+        redirect_url = "https://work.company.com/login"
         return await client.authorize_redirect(request, redirect_url)
 
     async def callback(self, request: Request, provider_name: str) -> Dict[str, Any]:

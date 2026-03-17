@@ -1,5 +1,5 @@
 services:
-  api:
+  work-api:
     image: 127.0.0.1:5000/private/work-api
     networks:
       - caddy_reverse_proxy
@@ -8,11 +8,11 @@ services:
       - OIDC_CLIENT_ID=9rSlChoogFNk34gO79xnA2iCsnBntl1zDRa8d3sP
       - OIDC_CLIENT_SECRET=fj2dfDvRm1yK2ZCCWnVlSC4DbeELDEc9CVUoE1mg6GcXsZ2jxOgMM5cn2sJ5J8pUMNQZ8mkWvCbyne0DekYhBfP1CmI7h5Dwt3vDpgYrP8RoyPYKZlJ55tdJXOq28Los
       - OIDC_DISCOVERY_URL=https://auth.company.com/application/o/work-plan/.well-known/openid-configuration
-      - REDIRECT_URI=http://localhost:8000/auth/callback
+      - REDIRECT_URI=https://work.company.com/auth/callback
       - OIDC_SCOPE='["openid", "email", "profile"]'
       - SECRET_KEY=ffcdee7d-e877-412f-8675-03e27253ff07
       - AUDIENCE=9rSlChoogFNk34gO79xnA2iCsnBntl1zDRa8d3sP
-  web:
+  work-web:
     image: 127.0.0.1:5000/private/work-web
     networks:
       - caddy_reverse_proxy
