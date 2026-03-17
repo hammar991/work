@@ -10,7 +10,7 @@ RUN uv venv
 RUN uv lock
 RUN uv sync
 
-COPY ../backend ./src/
+COPY ./src/ ./src/
 RUN uv pip install -e .
 
 ENV PYTHONPATH=/app/src
