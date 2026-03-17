@@ -45,15 +45,10 @@ jobs:
       - run: echo "🎉 此任务由 ${{ gitea.event_name }} 事件自动触发."
       - run: echo "🐧 使用系统 ${{ runner.os }} Gitea 执行"
       - run: echo "🔎 分支 ${{ gitea.ref }} 存储库 ${{ gitea.repository }}."
-      - run: cd ~
       - run: git clone https://gitea.company.com/${{gitea.repository}}
-      - run: cd work/backend
-      - run: ls
-      - run: docker build -t cr.company.com/private/work-api:latest .
+      - run: cd work/backend && docker build -t cr.company.com/private/work-api:latest .
       - run: docker push cr.company.com/private/work-api:latest
-      - run: cd ~
-      - run: cd work/frontend
-      - run: ls
+      - run: cd work/frontend && docker build -t cr.company.com/private/work-web:latest .
       - run: docker build -t cr.company.com/private/work-web:latest .
       - run: docker push cr.company.com/private/work-web:latest
       - run: echo "🍏 任务状态 ${{ job.status }}"
