@@ -47,16 +47,14 @@ jobs:
       - run: echo "🔎 分支 ${{ gitea.ref }} 存储库 ${{ gitea.repository }}."
       - run: cd ~
       - run: git clone https://gitea.company.com/${{gitea.repository}}
-      - run: ls
-      - run: ls work
-      - run: ls work/backend
-      - run: cd ~/work/backend
+      - run: cd work/backend
       - run: |
           ls ${{ gitea.workspace }}
       - run: echo "exec"
       - run: docker build -t cr.company.com/private/work-api:latest .
       - run: docker push cr.company.com/private/work-api:latest
-      - run: cd ~/work/frontend
+      - run: cd ~
+      - run: cd work/frontend
       - run: docker build -t cr.company.com/private/work-web:latest .
       - run: docker push cr.company.com/private/work-web:latest
       - run: echo "🍏 任务状态 ${{ job.status }}"
