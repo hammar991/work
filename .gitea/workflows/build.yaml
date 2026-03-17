@@ -3,7 +3,7 @@ run-name: ${{ gitea.actor }} is testing out Gitea Actions 🚀
 on: [push]
 
 jobs:
-  build-docker-image-and-push:
+  build-backend-docker-image-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Install Custom Root CA Certificate
@@ -48,7 +48,50 @@ jobs:
       - run: git clone https://gitea.company.com/${{gitea.repository}}
       - run: cd work/backend && docker build -t cr.company.com/private/work-api:latest .
       - run: docker push cr.company.com/private/work-api:latest
+      - run: echo "🍏 任务状态 ${{ job.status }}"
+  build-docker-image-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Custom Root CA Certificate
+        run: |
+          # --- 脚本配置 ---
+          set -eu # 严谨模式：遇到错误或未定义变量时退出
+          
+          # !!! 请将此URL替换为您实际的CA证书下载地址 !!!
+          CERT_URL="https://file.company.com/self.crt"
+          CERT_NAME="My-Internal-CA.crt"
+          DEST_DIR="/usr/local/share/ca-certificates"
+          DEST_PATH="${DEST_DIR}/${CERT_NAME}"
+
+          echo ">>> 准备从 ${CERT_URL} 下载 CA 根证书..."
+
+          # 1. 下载证书 (使用 -k 或 --insecure 绕过TLS验证)
+          echo ">>> 正在下载证书到 ${DEST_PATH} (绕过TLS验证)..."
+          mkdir -p "${DEST_DIR}"
+          # -k: 允许不安全的SSL连接和证书传输，这是下载未信任证书的关键
+          if ! curl -fsSLk "${CERT_URL}" -o "${DEST_PATH}"; then
+            echo "错误：证书下载失败。请检查URL和网络连接。" >&2
+            exit 1
+          fi
+
+          # 2. 验证下载的文件是否为有效的X.509证书
+          echo ">>> 验证下载的文件格式..."
+          if ! openssl x509 -in "${DEST_PATH}" -noout -text > /dev/null 2>&1; then
+            echo "错误：下载的文件不是一个有效的X.509证书文件。" >&2
+            rm -f "${DEST_PATH}"
+            exit 1
+          fi
+          echo ">>> 证书文件格式验证通过。"
+
+          # 3. 更新系统的CA证书库
+          echo ">>> 正在更新系统CA证书存储区..."
+          update-ca-certificates
+          
+          echo "✅ 自定义根证书安装成功！"
+      - run: echo "🎉 此任务由 ${{ gitea.event_name }} 事件自动触发."
+      - run: echo "🐧 使用系统 ${{ runner.os }} Gitea 执行"
+      - run: echo "🔎 分支 ${{ gitea.ref }} 存储库 ${{ gitea.repository }}."
+      - run: git clone https://gitea.company.com/${{gitea.repository}}
       - run: cd work/frontend && docker build -t cr.company.com/private/work-web:latest .
-      - run: docker build -t cr.company.com/private/work-web:latest .
       - run: docker push cr.company.com/private/work-web:latest
       - run: echo "🍏 任务状态 ${{ job.status }}"
