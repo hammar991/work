@@ -3,15 +3,15 @@ import certifi
 from loguru import logger
 
 
-SELF_SIGN_CA = Path("src/cert/self.crt")
-logger.debug(list(Path(".").glob("*")))
-cert_path = certifi.where()
-
-# 添加自签名的SSL证书
-with SELF_SIGN_CA.open(mode="rb") as f:
-    certificate = f.read()
-    with open(cert_path, 'ab') as cert_file:
-        cert_file.write(certificate)
+# SELF_SIGN_CA = Path("src/cert/self.crt")
+# logger.debug(list(Path(".").glob("*")))
+# cert_path = certifi.where()
+#
+# # 添加自签名的SSL证书
+# with SELF_SIGN_CA.open(mode="rb") as f:
+#     certificate = f.read()
+#     with open(cert_path, 'ab') as cert_file:
+#         cert_file.write(certificate)
 
 
 from fastapi import FastAPI
